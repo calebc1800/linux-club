@@ -1,0 +1,6 @@
+Your Name: STEM
+Your Computer's Name: Linux#
+Username: lab-admin
+Password: unixunix
+Require my password to log in.
+Do not encrypt my home folder
