@@ -1,11 +1,18 @@
 #!/bin/bash
+
+#check if running as root
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as root" 
+    exit 1
+fi
+
 #Repo Install
 #KDEnlive
 add-apt-repository ppa:kdenlive/kdenlive-stable
 #Avidemux
-sudo add-apt-repository ppa:ubuntuhandbook1/avidemux
+add-apt-repository ppa:ubuntuhandbook1/avidemux
 #Open Shot
-sudo add-apt-repository ppa:openshot.developers/ppa
+add-apt-repository ppa:openshot.developers/ppa
 
 #Update
 apt update
