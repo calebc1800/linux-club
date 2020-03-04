@@ -3,6 +3,7 @@
 if [ -z "$1" ]; then 
     echo "Please run this script with the passwd for root"
     echo "user as an argument."
+    exit 1
 fi
 
 # Check for root
