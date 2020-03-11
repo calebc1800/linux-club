@@ -1,7 +1,5 @@
-Wanted changes:
+Wanted changes in v2:
     Use external files for application list and user list
     Change to function based programming
     Include custom errors
     Change user additions to loop over a list
-
-03/11/2020:
