@@ -18,7 +18,7 @@ apt upgrade -y
 apt install gimp inkscape pinta digikam krita darktable rawtherapee openshot kdenlive frei0r-plugins shotcut pitivi install avidemux2.7-qt5 avidemux2.7-qt5-data avidemux2.7-plugins-qt5 avidemux2.7-jobs-qt5 openshot flowblade cinelerra -y
 
 # change root password
-sh -c 'echo root:password | chpasswd'
+sh -c 'echo root:$1 | chpasswd'
 echo "Password has been changed to $1"
 
 # add user for standard
