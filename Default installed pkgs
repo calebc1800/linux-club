@@ -1,3 +1,4 @@
+#Very long list see default-installed-pkgs-no-dependent.txt
 accountsservice/bionic,now 0.6.45-1ubuntu1 amd64 [installed]
 acl/bionic,now 2.2.52-3build1 amd64 [installed]
 acpi-support/bionic,now 0.142 amd64 [installed]

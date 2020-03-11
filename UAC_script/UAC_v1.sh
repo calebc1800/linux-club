@@ -11,11 +11,15 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+#update and install video and photo packages
 add-apt-repository ppa:ubuntuhandbook1/avidemux -y
 add-apt-repository ppa:kdenlive/kdenlive-stable -y
 apt update 
 apt upgrade -y
 apt install gimp inkscape pinta digikam krita darktable rawtherapee openshot kdenlive frei0r-plugins shotcut pitivi install avidemux2.7-qt5 avidemux2.7-qt5-data avidemux2.7-plugins-qt5 avidemux2.7-jobs-qt5 openshot flowblade cinelerra -y
+#remove unnecessary/security risk packages
+apt purge hexchat -y
+
 
 # change root password
 sh -c 'echo root:password | chpasswd'
