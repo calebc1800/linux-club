@@ -1,40 +1,85 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then 
-    echo "Please run this script with the passwd for root"
-    echo "user as an argument."
-fi
+####NEEDS TO BE TESTED####
 
-# Check for root
-if [[ $EUID -ne 0 ]]; then
-    echo "User must be run as root"
-    exit 1
-fi
+check_arguments() {
+    #Checks to make sure that there are arguments are there
+    if [ -z "$1" ]; then 
+    echo "[-] Please run this script with the new password for root user as an argument."
+    fi
+}
+root_check() {
+    # Check for root
+    if [[ $EUID -ne 0 ]]; then
+        echo "User must be run as root"
+        exit 1
+    fi  
+}
+working_dir() {
+    #Changes directory to script's directory in order to access array list
+    work_dir=$(dirname $0)
+    cd $work_dir
+}
+add_repositories() {
+    #adds additional repositories from file
+    readarray add_rep < $1 #$1 = location of repository list
+    for i in ${add_rep[@]}; do
+        add-apt-repository $i -y >/dev/null
+        [ $? -eq 0 ] && echo "[+] $1 has been successfully added" || echo "[-] ERROR: Could not add $1 to repository list" #Custom Error
+    done
+    apt update
+}
+system_upgrade() {
+    #simple update and upgrade
+    apt update 
+    apt upgrade -y
+}
+package_install() {
+    #installs new packages
+    readarray add_pkg < $1 #$1 = location of package list
+    for i in ${add_pkg[@]}; do
+        apt install $i -y >/dev/null
+        [ $? -eq 0 ] && echo "[+] $1 has been successfully installed" || echo "[-] ERROR: Could not install $1" #Custom Error
+    done
+}
+package_purge() {
+    #remove unnecessary/security risk packages
+    readarray purge_pkg < $1 #$1 = location of package list
+    for i in ${purge_pkg[@]}; do
+        apt purge $i -y >/dev/null
+        [ $? -eq 0 ] && echo "[+] $1 has been successfully purged" || echo "[-] ERROR: Could not purge $1" #Custom Error
+    done
+}
+root_pass_change() {
+    # change root password
+    sh -c "echo root:$1 | chpasswd"
+    echo "Password has been changed to $1"
+}
+new_users(){
+    # add user for standard
+    readarray new_users < $1 #$1 = location of new_users list
+    for i in ${new_users[@]}; do
+        egrep "^$i" /etc/passwd > /dev/null
+        if [ $? -eq 0 ]; then
+            echo "$i exists!"
+        else
+            # sets the password to username change this later maybe
+            pass=$(perl -e 'print crypt($ARGV[0], "password")' $i) #password is same as username
+            useradd -m -p $pass $i
+            [ $? -eq 0 ] && echo "[+] User has been added to the system!" || echo "[-] Failed to add user!"
+        fi
+    done
+}
 
-#update and install video and photo packages
-add-apt-repository ppa:ubuntuhandbook1/avidemux -y
-add-apt-repository ppa:kdenlive/kdenlive-stable -y
-apt update 
-apt upgrade -y
-apt install gimp inkscape pinta digikam krita darktable rawtherapee openshot kdenlive frei0r-plugins shotcut pitivi install avidemux2.7-qt5 avidemux2.7-qt5-data avidemux2.7-plugins-qt5 avidemux2.7-jobs-qt5 openshot flowblade cinelerra -y
-#remove unnecessary/security risk packages
-apt purge hexchat -y
-
-
-# change root password
-sh -c 'echo root:password | chpasswd'
-echo "Password has been changed to $1"
-
-# add user for standard
-username=film
-egrep "^$username" /etc/passwd > /dev/null
-if [ $? -eq 0 ]; then
-    echo "$username exists!"
-    exit 1
-else
-    # sets the password to film change this later maybe
-    pass=$(perl -e 'print crypt($ARGV[0], "password")' $username)
-    useradd -m -p $pass $username
-    [ $? -eq 0 ] && echo "User has been added to the system!" || echo "Failed to add user!"
-fi
-
+###Operation Start###
+check_arguments
+root_check
+working_dir
+add_repositories ./add_repositories.txt
+system_upgrade
+package_install ./package_install.txt
+package_purge ./package_purge.txt
+root_pass_change
+new_users ./new_users.txt
+echo "All done!"
+exit 0

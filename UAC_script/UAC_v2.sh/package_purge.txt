@@ -1,0 +1,5 @@
+hexchat
+telnet
+ssh
+openvpn
+ftp

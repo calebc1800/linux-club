@@ -1,0 +1,2 @@
+ppa:ubuntuhandbook1/avidemux
+ppa:kdenlive/kdenlive-stable
